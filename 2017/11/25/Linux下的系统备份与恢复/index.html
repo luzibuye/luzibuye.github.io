@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 8.1.1">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"luzibuye.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="最近突然想折腾一下Manjaro的备份，想把系统备份一遍然后装到固态里面。 在搜索关于备份这方面内容的时候，找到了四个方法吧，但是最终好像只有一个对我有用，可能是操作不行吧。  00.利用tar打包再解包打包系统:首先呢，要先知道tar有哪些参数可用，这个用man查看吧，英文的可能看不太明白，网上也有很多资源啊。整体的思路就是，cd到&#x2F;下，然后开始把一些并不需要备份的目录以及打的包本身">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux下的系统备份与恢复">
+<meta property="og:url" content="https://luzibuye.github.io/2017/11/25/Linux%E4%B8%8B%E7%9A%84%E7%B3%BB%E7%BB%9F%E5%A4%87%E4%BB%BD%E4%B8%8E%E6%81%A2%E5%A4%8D/index.html">
+<meta property="og:site_name" content="热带雨林">
+<meta property="og:description" content="最近突然想折腾一下Manjaro的备份，想把系统备份一遍然后装到固态里面。 在搜索关于备份这方面内容的时候，找到了四个方法吧，但是最终好像只有一个对我有用，可能是操作不行吧。  00.利用tar打包再解包打包系统:首先呢，要先知道tar有哪些参数可用，这个用man查看吧，英文的可能看不太明白，网上也有很多资源啊。整体的思路就是，cd到&#x2F;下，然后开始把一些并不需要备份的目录以及打的包本身">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2017-11-25T01:00:00.000Z">
+<meta property="article:modified_time" content="2026-03-11T14:31:47.051Z">
+<meta property="article:author" content="luzibuye">
+<meta property="article:tag" content="Linux">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://luzibuye.github.io/2017/11/25/Linux%E4%B8%8B%E7%9A%84%E7%B3%BB%E7%BB%9F%E5%A4%87%E4%BB%BD%E4%B8%8E%E6%81%A2%E5%A4%8D/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://luzibuye.github.io/2017/11/25/Linux%E4%B8%8B%E7%9A%84%E7%B3%BB%E7%BB%9F%E5%A4%87%E4%BB%BD%E4%B8%8E%E6%81%A2%E5%A4%8D/","path":"2017/11/25/Linux下的系统备份与恢复/","title":"Linux下的系统备份与恢复"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Linux下的系统备份与恢复 | 热带雨林</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">热带雨林</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#00-%E5%88%A9%E7%94%A8tar%E6%89%93%E5%8C%85%E5%86%8D%E8%A7%A3%E5%8C%85"><span class="nav-number">1.</span> <span class="nav-text">00.利用tar打包再解包</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%93%E5%8C%85%E7%B3%BB%E7%BB%9F"><span class="nav-number">1.1.</span> <span class="nav-text">打包系统:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E5%8C%85%E6%81%A2%E5%A4%8D%E7%B3%BB%E7%BB%9F%EF%BC%9A"><span class="nav-number">1.2.</span> <span class="nav-text">解包恢复系统：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#01-%E5%88%A9%E7%94%A8dd%E5%91%BD%E4%BB%A4"><span class="nav-number">2.</span> <span class="nav-text">01.利用dd命令</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#02-clonezilla-LiveUSB"><span class="nav-number">3.</span> <span class="nav-text">02.clonezilla LiveUSB</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#03-rsync"><span class="nav-number">4.</span> <span class="nav-text">03.rsync</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">luzibuye</p>
+  <div class="site-description" itemprop="description">生命重复着相遇和错过</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">6</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://luzibuye.github.io/2017/11/25/Linux%E4%B8%8B%E7%9A%84%E7%B3%BB%E7%BB%9F%E5%A4%87%E4%BB%BD%E4%B8%8E%E6%81%A2%E5%A4%8D/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="luzibuye">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="热带雨林">
+      <meta itemprop="description" content="生命重复着相遇和错过">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Linux下的系统备份与恢复 | 热带雨林">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Linux下的系统备份与恢复
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2017-11-25 09:00:00" itemprop="dateCreated datePublished" datetime="2017-11-25T09:00:00+08:00">2017-11-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2026-03-11 22:31:47" itemprop="dateModified" datetime="2026-03-11T22:31:47+08:00">2026-03-11</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/coding/" itemprop="url" rel="index"><span itemprop="name">coding</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><blockquote>
+<p>最近突然想折腾一下Manjaro的备份，想把系统备份一遍然后装到固态里面。</p>
+<p>在搜索关于备份这方面内容的时候，找到了四个方法吧，但是最终好像只有一个对我有用，可能是操作不行吧。</p>
+</blockquote>
+<h2 id="00-利用tar打包再解包"><a href="#00-利用tar打包再解包" class="headerlink" title="00.利用tar打包再解包"></a>00.利用tar打包再解包</h2><h3 id="打包系统"><a href="#打包系统" class="headerlink" title="打包系统:"></a>打包系统:</h3><p>首先呢，要先知道tar有哪些参数可用，这个用man查看吧，英文的可能看不太明白，网上也有很多资源啊。整体的思路就是，cd到&#x2F;下，然后开始把一些并不需要备份的目录以及打的包本身排除掉，就行了。同时tar还可以借助其他的压缩软件来进行压缩以及解压。这就会节省一些时间吧，比如说用pigz，这个在Arch的仓库里是有的。然后参考了v2ex上的方法，以及网友提供的脚本，稍微修改了一下，就成了这样的:</p>
+<span id="more"></span>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/usr/bin/env bash</span></span><br><span class="line"><span class="comment"># Warning!</span></span><br><span class="line"><span class="comment"># if you DIY a stage package like this,</span></span><br><span class="line"><span class="comment"># you must use the Stage3`s /etc/udev/*</span></span><br><span class="line"><span class="comment"># or rm /etc/udev/rules.d/70*</span></span><br><span class="line"><span class="comment"># Warning!</span></span><br><span class="line"><span class="comment"># Update by likuku on Nov29,2016</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">readonly</span> DATE=$(<span class="built_in">date</span> +%Y_%m_%d_%H_%M_%S)</span><br><span class="line"><span class="built_in">readonly</span> ARCH=$(<span class="built_in">uname</span> -m)</span><br><span class="line"><span class="built_in">readonly</span> HOSTNAME=$(<span class="built_in">uname</span> -n)</span><br><span class="line"><span class="built_in">readonly</span> ROOTFS_TYPE=$(mount | grep -i <span class="string">&quot;on / type&quot;</span> | grep -vi <span class="string">&quot;rootfs&quot;</span> | awk <span class="string">&#x27;&#123;print $5&#125;&#x27;</span>)</span><br><span class="line"><span class="built_in">readonly</span> BACKUP_PATH=$(<span class="built_in">pwd</span>)</span><br><span class="line"><span class="built_in">readonly</span> STAGE5NAME=<span class="string">&quot;stage5_<span class="variable">$&#123;ARCH&#125;</span>_<span class="variable">$&#123;ROOTFS_TYPE&#125;</span>_<span class="variable">$&#123;HOSTNAME&#125;</span>.<span class="variable">$&#123;DATE&#125;</span>.tgz&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> /;</span><br><span class="line"><span class="built_in">sudo</span> tar --use-compress-program=pigz -cpvf <span class="variable">$&#123;BACKUP_PATH&#125;</span>/<span class="variable">$&#123;STAGE5NAME&#125;</span> \</span><br><span class="line">    --exclude=.<span class="variable">$&#123;BACKUP_PATH&#125;</span>/*.tgz \</span><br><span class="line">    --exclude=.<span class="variable">$&#123;BACKUP_PATH&#125;</span>/*.<span class="built_in">sha256sum</span> \</span><br><span class="line">    --exclude=./proc/* \</span><br><span class="line">    --exclude=./sys/* \</span><br><span class="line">    --exclude=./dev/* \</span><br><span class="line">    --exclude=./mnt \</span><br><span class="line">    --exclude=./media \</span><br><span class="line">    --exclude=./run \</span><br><span class="line">    --exclude=./var/lock/* \</span><br><span class="line">    --exclude=./var/run/* \</span><br><span class="line">    --exclude=./tmp/* \</span><br><span class="line">    --exclude=./lost+found \</span><br><span class="line">    .</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">#--exclude=./etc/ssh/ssh_host* \</span></span><br><span class="line">    <span class="comment">#--exclude=./home/* \</span></span><br><span class="line">    <span class="comment">#--exclude=./usr/portage/* \</span></span><br><span class="line">    <span class="built_in">wait</span>;</span><br><span class="line"><span class="built_in">cd</span> <span class="variable">$&#123;BACKUP_PATH&#125;</span>;</span><br><span class="line"><span class="built_in">sha256sum</span> <span class="variable">$&#123;STAGE5NAME&#125;</span> &gt;<span class="variable">$&#123;STAGE5NAME&#125;</span>.<span class="built_in">sha256sum</span></span><br></pre></td></tr></table></figure>
+
+<p>应该很快就可以打包完成的。接下来就是恢复系统了。</p>
+<h3 id="解包恢复系统："><a href="#解包恢复系统：" class="headerlink" title="解包恢复系统："></a>解包恢复系统：</h3><p>这里需要一个LiveUSB，从Ｕ盘启动后进入Live环境，打开终端，挂载硬盘。比如说，生成的压缩包在<code>/dev/sdc2</code>里面，然后把它挂载到想要的位置:<code>sudo mkdir /f &amp;&amp; sudo mount /dev/sdc2 /f</code>。再选择需要恢复到的硬盘，比如这次只想把系统恢复到<code>/</code>分区下，不再单独分配<code>/home</code>分区，就可以把<code>/dev/sda２</code>（<code>/dev/sda1</code>是swap分区）挂载到<code>/mnt</code>：<code>sudo mount /dev/sda2 /mnt</code>,再通过<code>lsblk</code>查看是否都挂对了地方。之后进行解压操作，在这之前需要安装pigz啦。然后<code># tar --usecompress-program=pigz -xvpf /f/stage5_xxxxx.tgz -C /mnt</code>。OK，等一会就可以了。还记得exclude了哪些目录了吗？再创建一下就行了～最后再修复grub。完整的操作如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#解包恢复系统</span></span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">mkdir</span> /f &amp;&amp; <span class="built_in">sudo</span> mount /dev/sdc2 /f</span><br><span class="line"><span class="built_in">sudo</span> mount /dev/sda2 /mnt</span><br><span class="line"><span class="built_in">sudo</span> tar --use-compress-program=pigz -xvpf /f/stage5_xxxxx.tgz -C /mnt</span><br><span class="line"></span><br><span class="line">＃修复grub</span><br><span class="line"><span class="built_in">cd</span> /mnt</span><br><span class="line">mount -t proc proc /mnt/proc</span><br><span class="line">mount -t sysfs sys /mnt/sys</span><br><span class="line">mount -o <span class="built_in">bind</span> /dev /mnt/dev</span><br><span class="line">mount -t devpts pts /mnt/dev/pts</span><br><span class="line"><span class="built_in">chroot</span> /mnt</span><br><span class="line">＃安装需要的软件</span><br><span class="line"><span class="built_in">sudo</span> pacman -S mtools os-prober</span><br><span class="line">＃对于传统的BIOS启动方式</span><br><span class="line">grub-install --recheck /dev/sdb</span><br><span class="line">update-grub</span><br><span class="line">＃对于UEFI启动方式，我的x220刷了Bios,可以支持UEFi启动。/dev/sdb1是efi分区。</span><br><span class="line"><span class="built_in">sudo</span> mount /dev/sdb1 /boot/efi</span><br><span class="line"><span class="built_in">sudo</span> grub-install --target=x86_64-efi --efi-directory=/boot/efi bootloader-id=manjaro --recheck</span><br><span class="line">update-grub</span><br><span class="line"><span class="comment">#在开始使用新的硬盘之前可能需要改一下fstab</span></span><br><span class="line">blkid   <span class="comment">#查看各个硬盘的UUID,修改fstab会用到</span></span><br><span class="line"><span class="built_in">sudo</span> vim /etc/fstab     <span class="comment">#对应着把UUID改一下，应该很容易的。</span></span><br></pre></td></tr></table></figure>
+
+<p>接下来就可以重启了，还是原来的系统，只是速度更快了哦～～<br>关于默认启动项为manjaro的解决办法是，重新安装refind。<br>然后是arch上的关于tty1的kde不能启动的问题。就是出现<code>cgroup:cgroup2:unknown option &quot;nsdelegate&quot;</code>的解决办法就是重新安装sddm,＝＝参见这个帖子:<a target="_blank" rel="noopener" href="https://forum.manjaro.org/t/cant-log-into-manjaro-cgroup-cgroup2-unknown-option-nsdelegate/33494/37">Can’t log into Manjaro - cgroup: cgroup2: unknown option “nsdelegate”</a>。这个大神好象是Manjaro Team的吧。</p>
+<h2 id="01-利用dd命令"><a href="#01-利用dd命令" class="headerlink" title="01.利用dd命令"></a>01.利用dd命令</h2><p>好像要求有点多，而且是真的慢，但是能够复制uuid,没有去深入研究。</p>
+<h2 id="02-clonezilla-LiveUSB"><a href="#02-clonezilla-LiveUSB" class="headerlink" title="02.clonezilla LiveUSB"></a>02.clonezilla LiveUSB</h2><p>这货搞得另一台电脑的引导挂掉＝＝，是不是因为打开姿势不对？？？但是在x220上一直没法进入界面。。。。</p>
+<h2 id="03-rsync"><a href="#03-rsync" class="headerlink" title="03.rsync"></a>03.rsync</h2><p>这个也没有进行深入了解，但是Arch Wiki上有详细的内容。传送门：<a target="_blank" rel="noopener" href="https://wiki.archlinux.org/index.php/Rsync_(%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87)">Rsync (简体中文)</a></p>
+<blockquote>
+<p>好了，就这样了～～第一次写这样的博文啊＝。＝</p>
+<p>更新几句废话：把操作过程记录下来真的是太重要了，免得下次用到的时候四处找教程。</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Linux/" rel="tag"># Linux</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2017/11/20/%E8%81%9A%E7%B1%BB%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0/" rel="prev" title="聚类算法学习">
+                  <i class="fa fa-angle-left"></i> 聚类算法学习
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2017/12/03/Daydream-Delusion/" rel="next" title="Daydream Delusion">
+                  Daydream Delusion <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">luzibuye</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>
